@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRIBAL CHIEFS</title>
+<style>
+  /* Body & watermark */
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #1a1f36; /* soft dark navy */
+    color: #e0e0e0;
+    /* Watermark 🎮 small, vertical, 45° slant */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><text x="0" y="15" font-size="12" fill="%2366e0ff" opacity="0.05" transform="rotate(45 10 10)">🎮</text></svg>');
+    background-repeat: repeat;
+    background-size: 40px 40px;
+  }
+
+  /* Container */
+  .container {
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Headers */
+  h1 {
+    text-align: center;
+    color: #66e0ff;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px #66e0ff, 0 0 20px #66e0ff;
+  }
+
+  /* Logo */
+  .logo {
+    display: block;
+    margin: 0 auto 20px auto;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 2px solid #66e0ff;
+    object-fit: cover;
+  }
+
+  /* Form */
+  input, textarea {
+    width: 100%;
+    max-width: 400px;
+    margin: 10px auto;
+    display: block;
+    padding: 10px;
+    background: #2a2f45;
+    border: 1px solid #66e0ff;
+    border-radius: 5px;
+    box-sizing: border-box;
+    color: #e0e0e0;
+  }
+  textarea { height: 80px; resize: none; }
+
+  /* Buttons */
+  button {
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 5px;
+    background: #66e0ff;
+    color: #1a1f36;
+    border: none;
+    cursor: pointer;
+    margin: 5px 0;
+  }
+  button:hover { background-color: #4dcde6; }
+
+  /* Pages */
+  .page { display: none; }
+  .active { display: block; }
+
+  /* Guild names */
+  .name-box { text-align: center; margin: 20px 0; }
+  .guild-name {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 10px 0;
+    color: #66e0ff;
+    text-shadow: none; /* no shine */
+  }
+
+  /* Profile preview */
+  #profilePreview {
+    display: block;
+    margin: 10px auto;
+    max-width: 200px;
+    border: 2px solid #ffd700;
+    border-radius: 5px;
+  }
+
+  /* Footer */
+  .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #ccc; }
+
+  /* Shine text on page 2 */
+  .shine {
+    text-align: center;
+    font-size: 18px;
+    color: #66e0ff;
+    text-shadow: 0 0 10px #66e0ff, 0 0 20px #66e0ff;
+    margin-bottom: 20px;
+  }
+
+  /* Page 2 padding */
+  #page2 { padding-top: 150px; } /* bring content further down */
+</style>
+</head>
+<body>
+
+<!-- Music autoplay with visible controls -->
+<audio id="bgMusic" src="bgm.mp3" loop autoplay controls></audio>
+
+<!-- Page 1 -->
+<div id="page1" class="page active container">
+  <img src="logo.png" alt="Logo" class="logo">
+  <h1>TRIBAL CHIEFS</h1>
+  <input type="text" id="whatsapp" placeholder="WhatsApp Contact">
+  <input type="text" id="gameUid" placeholder="Game UID">
+  <input type="text" id="guildName" placeholder="Name to be used in guild">
+  <input type="number" id="years" placeholder="Years of Game Experience">
+  <textarea id="reason" placeholder="Reason for joining"></textarea>
+  <input type="file" id="profile" accept="image/*">
+  <img id="profilePreview" src="" alt="" style="display:none;">
+  <button id="submitBtn">Submit Application</button>
+  <div class="footer">Developed by Complx FF</div>
+</div>
+
+<!-- Page 2 -->
+<div id="page2" class="page container">
+  <div class="shine">Congratulations! Your guild application has been submitted. You will be contacted via WhatsApp.</div>
+  <div class="name-box">
+    <div id="name1" class="guild-name"></div>
+    <button onclick="copyName('name1')">Copy Name 1</button>
+  </div>
+  <div class="name-box">
+    <div id="name2" class="guild-name"></div>
+    <button onclick="copyName('name2')">Copy Name 2</button>
+  </div>
+</div>
+
+<script>
+/* First-letter map */
+const firstLetterMap = {
+  A:'Ꭺ', B:'Ᏼ', C:'Ꮯ', D:'Ꭰ', E:'Ꭼ', F:'Ꮁ̵', G:'Ꮹ', H:'Ꮋ', I:'Ꮖ', J:'Ꭻ',
+  K:'Ꮶ', L:'Ꮮ', M:'Ꮇ', N:'N', O:'Ꮎ', P:'Ꮲ', Q:'Q', R:'Ꭱ', S:'Ꮪ', T:'Ꭲ',
+  U:'Ꮜ', V:'Ꮩ', W:'Ꮃ', X:'X', Y:'Ꭹ', Z:'Ꮓ'
+};
+
+/* Rest letters */
+const restMap = {a:'ᴀ',b:'ʙ',c:'ᴄ',d:'ᴅ',e:'ᴇ',f:'ғ',g:'ɢ',h:'ʜ',i:'ɪ',j:'ᴊ',k:'ᴋ',l:'ʟ',m:'ᴍ',n:'ɴ',o:'ᴏ',p:'ᴘ',q:'ǫ',r:'ʀ',s:'s',t:'ᴛ',u:'ᴜ',v:'ᴠ',w:'ᴡ',x:'x',y:'ʏ',z:'ᴢ'};
+
+/* Telegram Bot */
+const botToken="8501736373:AAGyERcT51a9JqSQQYb1A65J99DfcK_WacQ";
+const chatId="7731702712";
+
+/* Profile preview */
+document.getElementById('profile').addEventListener('change', function(event){
+  const reader = new FileReader();
+  reader.onload = function(){
+    const img = document.getElementById('profilePreview');
+    img.src = reader.result;
+    img.style.display = 'block';
+  }
+  reader.readAsDataURL(event.target.files[0]);
+});
+
+/* Generate guild names */
+function generateGuildNames(name){
+  if(!name) return ["",""];
+  let firstChar = name[0].toUpperCase();
+  const firstLetter = firstLetterMap[firstChar] || firstChar;
+  let rest = '';
+  for(let i=1;i<name.length;i++){
+    const c = name[i].toLowerCase();
+    rest += restMap[c] || c;
+  }
+  const invisibleSpace = '\u205F';
+  return [
+    `Ꮯʜɪғ${invisibleSpace}${firstLetter}${rest}♱`,
+    `Ꮮᴀᴅʏ${invisibleSpace}${firstLetter}${rest}⸙`
+  ];
+}
+
+/* Copy function */
+function copyName(id){
+  const text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text);
+  alert("Copied: " + text);
+}
+
+/* Submit form */
+document.getElementById('submitBtn').addEventListener('click', async function(){
+  const whatsapp = document.getElementById('whatsapp').value;
+  const uid = document.getElementById('gameUid').value;
+  const nameInput = document.getElementById('guildName').value;
+  const years = document.getElementById('years').value;
+  const reason = document.getElementById('reason').value;
+  const profile = document.getElementById('profile').files[0];
+
+  if(!whatsapp || !uid || !nameInput){ alert("Please fill WhatsApp, Game UID, and Name."); return; }
+
+  const generated = generateGuildNames(nameInput);
+  document.getElementById('name1').innerText = generated[0];
+  document.getElementById('name2').innerText = generated[1];
+
+  document.getElementById('page1').classList.remove('active');
+  document.getElementById('page2').classList.add('active');
+
+  // Telegram message
+  let messageText = `📝 New Guild Application:\n📞 WhatsApp Contact: ${whatsapp}\n🎮 Game UID: ${uid}\n👤 Name for Guild: ${nameInput}\n🕹 Years of Experience: ${years}\n✍ Reason for Joining: ${reason}\n🌟 Generated Names:\n1. ${generated[0]}\n2. ${generated[1]}`;
+
+  const formData = new FormData();
+  formData.append('chat_id', chatId);
+  formData.append('caption', messageText);
+  if(profile) formData.append('photo', profile);
+
+  if(profile){
+    await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, { method:'POST', body: formData });
+  } else {
+    const textData = new FormData();
+    textData.append('chat_id', chatId);
+    textData.append('text', messageText);
+    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, { method:'POST', body: textData });
+  }
+});
+</script>
+</body>
+</html>
+<!-- Music -->
+<audio id="bgMusic" src="bgm.mp3" loop></audio>
+
+<!-- Start button (only for mobile autoplay issue) -->
+<button id="startMusicBtn" style="position:fixed;top:10px;right:10px;z-index:999;padding:5px 10px;background:#66e0ff;color:#1a1f36;border:none;border-radius:5px;">▶ Play Music</button>
+
+<script>
+const music = document.getElementById('bgMusic');
+const btn = document.getElementById('startMusicBtn');
+
+// Try autoplay first (desktop)
+music.play().catch(()=>{ 
+  // If autoplay blocked (mobile), show button
+  btn.style.display = 'block';
+});
+
+btn.addEventListener('click', ()=>{
+  music.play();          // start music
+  btn.style.display = 'none'; // hide button after tap
+});
+</script>
